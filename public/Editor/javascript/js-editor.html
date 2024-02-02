@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
+    <title>javascript Online Code Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/w3.css" />
+    <link rel="stylesheet" href="css/codemirror.css" />
+    <link rel="stylesheet" href="css/tit-fontello.css" />
+
+    <script src="js/codemirror/codemirror.js"></script>
+    <script src="js/codemirror/addon/edit/closetag.js"></script>
+    <script src="js/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="js/codemirror/addon/fold/xml-fold.js"></script>
+    <script src="js/codemirror/mode/xml/xml.js"></script>
+    <script src="js/codemirror/mode/javascript/javascript.js"></script>
+    <script src="js/codemirror/mode/css/css.js"></script>
+    <script src="js/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+    <script>
+      function $Id(id) {
+        return document.getElementById(id);
+      }
+      function $Tag(tag) {
+        return document.getElementsByTagName(tag);
+      }
+
+      if (window.addEventListener) {
+        window.addEventListener("resize", browserResize);
+      } else if (window.attachEvent) {
+        window.attachEvent("onresize", browserResize);
+      }
+
+      //window.onbeforeunload = function(e) { if (e) {e.returnValue = "You have unsaved changes."}; return "Are you sure?"; }
+
+      function browserResize() {
+        if (window.screen.availWidth <= 768) {
+          restack(window.innerHeight > window.innerWidth);
+        }
+        showFrameSize();
+      }
+    </script>
+
+    <style>
+      * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #f1f1f1;
+        color: #000000;
+        margin: 0px;
+      }
+
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0px 10px;
+        overflow: hidden;
+      }
+
+      li {
+        float: left;
+        margin: 2px;
+      }
+
+      li a {
+        display: inline-block;
+      }
+
+      li.dropdown {
+        display: inline-block;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 44px;
+        min-width: 160px;
+        width: 40%;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
+        background-color: hsl(0, 0%, 95%);
+        z-index: 10;
+      }
+
+      .dropdown-content p {
+        color: black;
+        padding: 2px 16px;
+        font-size: 12px;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        margin: 0 4px;
+      }
+
+      .switch input {
+        display: none;
+      }
+
+      .slider {
+        box-sizing: border-box;
+        position: static;
+        width: 50px;
+        height: 40px;
+        margin: 0px 4px;
+        background: white;
+        border: solid lightgrey;
+        border-radius: 20%;
+        border-width: 4px 20px 4px 4px;
+        display: inline-block;
+        vertical-align: -14px;
+        cursor: pointer;
+        transition: border 0.3s;
+      }
+
+      /*.slider:hover { 		} */
+      input:checked + .slider {
+        border-color: hsl(122, 39.4%, 49.2%);
+        /*w3-green*/
+        border-width: 4px 4px 4px 20px;
+      }
+
+      .w3-bar .w3-bar-item:hover {
+        color: #757575 !important;
+      }
+
+      .w3-bar .w3-bar-item {
+        margin: 2px;
+        height: calc(100% - (2px + 2px));
+        padding: 2px 12px;
+      }
+
+      .dropdown {
+        display: inline;
+        z-index: 2;
+      }
+
+      .CodeMirror.cm-s-default {
+        line-height: normal;
+        padding: 4px;
+        height: 100%;
+        width: 100%;
+      }
+
+      #container {
+        margin: 0px 10px;
+        position: absolute;
+        height: calc(100% - 10px - 44px);
+        width: calc(100% - 20px);
+        top: 44px;
+        bottom: 0px;
+        left: 0;
+        right: 0;
+      }
+
+      #textareacontainer,
+      #dragbar,
+      #iframecontainer {
+        float: left;
+        height: 100%;
+        width: calc(50% - 6px);
+        box-shadow: 0px 3px 5px -1px rgb(182, 181, 181);
+      }
+
+      #dragbar {
+        width: 12px;
+        box-shadow: none;
+        cursor: col-resize;
+      }
+
+      #filename {
+        border: 1px solid hsl(130, 100%, 30%);
+        background: white;
+        width: 300px;
+        padding: 7px 4px;
+        text-align: left;
+      }
+
+      #shield {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 4;
+      }
+
+      #framesize span {
+        font-family: Consolas, monospace;
+      }
+
+      #iframeResult {
+        background-color: #ffffff;
+        border: none;
+        height: 100%;
+        width: 100%;
+      }
+
+      @media screen and (max-width: 1260px) {
+        #container {
+          top: 88px;
+          height: calc(100% - 10px - 88px);
+        }
+      }
+
+      @media screen and (max-width: 450px) {
+        #container {
+          top: 160px;
+          height: calc(100% - 10px - 160px);
+        }
+      }
+
+      @media only screen and (max-device-width: 768px) {
+        #container {
+          min-width: 320px;
+        }
+      }
+
+      [class*="tit-icon-"] {
+        /*font: normal normal normal 18px/1 tit-fontello;*/
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        padding: 8px 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* this MUST be the last rule*/
+      .show {
+        display: block;
+      }
+      .buttonha {
+        border: none;
+        color: white;
+        padding: 10px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        background-color: #008cba;
+      }
+    </style>
+  </head>
+
+  <body>
+    <ul className="w3-light-grey">
+      <li>
+        <img
+          src="https://codingtutorials.in/_next/image?url=%2Fimages%2Flogo.png&w=828&q=75"
+          height="40px"
+          width="140px"
+          alt="logo"
+        />
+      </li>
+
+      <li style="margin-left: 60px">
+        <a href="https://codingtutorials.in/" class="buttonha" title="Load file"
+          >Home</a
+        >
+      </li>
+      <li style="margin-left: 20px">
+        <button class="buttonha" onclick="restack()" title="Load file">
+          Rotate
+        </button>
+      </li>
+
+      <li style="float: right">
+        <span
+          className="w3-right w3-bar-item"
+          style="padding: 9px 0; display: block"
+          id="framesize"
+        ></span>
+      </li>
+    </ul>
+
+    <div id="shield"></div>
+
+    <div id="container">
+      <div id="textareacontainer">
+        <textarea
+          autocomplete="on"
+          id="textareaCode"
+          wrap="logical"
+          spellcheck="false"
+        >
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<h2>JavaScript setMonth()</h2>
+<p>The setMonth() method sets the mont of a date object.</p>
+<p>Note that months count from 0. December is month 4:</p>
+
+<p id="demo"></p>
+
+<script>
+	const d = new Date();
+	d.setMonth(4);
+	document.getElementById("demo").innerHTML = d;
+</script>
+
+</body>
+
+</html>
+
+		</textarea
+        >
+      </div>
+      <div id="dragbar"></div>
+      <div id="iframecontainer">
+        <iframe id="iframeResult"> </iframe>
+      </div>
+    </div>
+
+    <script>
+      var framecontentedit = true;
+      submitTryit();
+
+      function submitTryit(n) {
+        if (window.editor) {
+          window.editor.save();
+        }
+        var text = $Id("textareaCode").value;
+        if (window.editor) {
+          var text = window.editor.getDoc().getValue("\n");
+        }
+        text = text.replace(/\n\n\n/g, "\n\n"); // normalize newlines (??!!)
+        var ifr = $Id("iframeResult");
+
+        var ifrw = ifr.contentWindow
+          ? ifr.contentWindow
+          : ifr.contentDocument.document
+          ? ifr.contentDocument.document
+          : ifr.contentDocument;
+        ifrw.document.open();
+        ifrw.document.write(text);
+        ifrw.document.close();
+        //23.02.2016: contentEditable is set to true, to fix text-selection (bug) in firefox.
+        //(and back to false to prevent the content from being editable)
+        //(To reproduce the error: Select text in the result window with, and without, the contentEditable statements below.)
+        if (ifrw.document.body && !ifrw.document.body.isContentEditable) {
+          ifrw.document.body.contentEditable = true;
+          ifrw.document.body.contentEditable = false;
+        }
+        ifrw.document.body.contentEditable = framecontentedit;
+      }
+      function reEdited() {
+        var text = frameHTML();
+        $Id("textareaCode").value = text;
+        window.editor.getDoc().setValue(text);
+      }
+
+      function showFrameSize() {
+        $Id("framesize").innerHTML =
+          "Result Size: <span>" +
+          $Id("iframecontainer")["clientWidth"] +
+          " x " +
+          $Id("iframecontainer")["clientHeight"] +
+          "</span>";
+      }
+
+      var layout = "horizontal";
+      var leftwidthperc = 50;
+      var leftheightperc = 50;
+
+      if (
+        window.screen.availWidth <= 768 &&
+        window.innerHeight > window.innerWidth
+      ) {
+        restack();
+      }
+
+      function restack() {
+        var l = $Id("textareacontainer");
+        var c = $Id("dragbar");
+        var r = $Id("iframecontainer");
+        if (layout == "vertical") {
+          l.style["height"] = c.style["height"] = r.style["height"] = "100%";
+          l.style["width"] = "calc(" + leftwidthperc + "% - 6px)";
+          c.style["width"] = "12px";
+          c.style["cursor"] = "col-resize";
+          r.style["width"] = "calc(" + (100 - leftwidthperc) + "% - 6px)";
+          layout = "horizontal";
+        } else {
+          l.style["width"] = c.style["width"] = r.style["width"] = "100%";
+          l.style["height"] = "calc(" + leftheightperc + "% - 6px)";
+          c.style["height"] = "12px";
+          c.style["cursor"] = "row-resize";
+          r.style["height"] = "calc(" + (100 - leftheightperc) + "% - 6px)";
+          layout = "vertical";
+        }
+        showFrameSize();
+      }
+
+      dragBalance($Id("dragbar"));
+
+      function dragBalance(balancer) {
+        if (window.addEventListener) {
+          balancer.addEventListener("mousedown", function (e) {
+            dragstart(e);
+          });
+          balancer.addEventListener("touchstart", function (e) {
+            dragstart(e);
+          });
+          window.addEventListener("mousemove", function (e) {
+            dragmove(e);
+          });
+          window.addEventListener("touchmove", function (e) {
+            dragmove(e);
+          });
+          window.addEventListener("mouseup", dragend);
+          window.addEventListener("touchend", dragend);
+        }
+
+        var dragging = false;
+        var pos1 = 0,
+          pos2 = 0,
+          pos3 = 0,
+          pos4 = 0;
+        function dragstart(e) {
+          e.preventDefault();
+          e = e || window.event;
+          // get the mouse cursor position at startup:
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          dragging = true;
+        }
+        function dragmove(e) {
+          var perc;
+          if (dragging) {
+            // show overlay to avoid interfering of mouse moving with textarea
+            $Id("shield").style.display = "block";
+            e = e || window.event;
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new size:
+            if (layout == "vertical") {
+              var pos = pos2;
+              var axe1 = "clientHeight";
+              var axe2 = "height";
+              perc =
+                ((balancer.previousElementSibling[axe1] +
+                  balancer[axe1] / 2 -
+                  pos) *
+                  100) /
+                balancer.parentElement[axe1];
+              leftheightperc = perc;
+            } else {
+              var pos = pos1;
+              var axe1 = "clientWidth";
+              var axe2 = "width";
+              perc =
+                ((balancer.previousElementSibling[axe1] +
+                  balancer[axe1] / 2 -
+                  pos) *
+                  100) /
+                balancer.parentElement[axe1];
+              leftwidthperc = perc;
+            }
+            if (perc > 5 && perc < 95) {
+              balancer.previousElementSibling.style[axe2] =
+                "calc(" + perc + "% - " + balancer[axe1] / 2 + "px)";
+              balancer.nextElementSibling.style[axe2] =
+                "calc(" + (100 - perc) + "% - " + balancer[axe1] / 2 + "px)";
+            }
+            showFrameSize();
+          }
+        }
+        function dragend() {
+          $Id("shield").style.display = "none";
+          dragging = false;
+          if (window.editor) {
+            window.editor.refresh();
+          }
+        }
+      }
+
+      function keypressed(e) {
+        if (
+          e.key != "ArrowLeft" &&
+          e.key != "ArrowRight" &&
+          e.key != "ArrowUp" &&
+          e.key != "ArrowDown"
+        ) {
+          submitTryit(1);
+        }
+      }
+      function keypressedinframe(e) {
+        if (
+          e.key != "ArrowLeft" &&
+          e.key != "ArrowRight" &&
+          e.key != "ArrowUp" &&
+          e.key != "ArrowDown"
+        ) {
+          reEdited();
+        }
+        setTimeout(reEdited, 100);
+      }
+      if (window.addEventListener) {
+        window.addEventListener("load", showFrameSize);
+        $Id("textareacontainer").addEventListener("keyup", function (e) {
+          keypressed(e);
+        });
+      }
+      frameWindow().addEventListener("keyup", keypressedinframe);
+      /*
+		function setFocusIframe() {frameWindow().focus();}
+		$Id("iframeResult").contentWindow.addEventListener("mousedown", function(e) {setTimeout(setFocusIframe, 100);return false});
+		*/
+      function colorcoding() {
+        window.editor = CodeMirror.fromTextArea($Id("textareaCode"), {
+          mode: "text/html",
+          htmlMode: true,
+          lineWrapping: false,
+          smartIndent: true,
+          indentUnit: 4,
+          tabSize: 4,
+          indentWithTabs: true,
+          addModeClass: true,
+          autoCloseTags: true,
+          autoCloseBrackets: true,
+        });
+        //window.editor.on("change", function () {window.editor.save();});
+        //window.editor.on("change", function () {submitTryit(1)}); better avoid this due to "conflict" with contentEditable
+      }
+      colorcoding();
+
+      function frameWindow() {
+        var ifr = $Id("iframeResult");
+        var ifrw = ifr.contentWindow
+          ? ifr.contentWindow
+          : ifr.contentDocument.document
+          ? ifr.contentDocument.document
+          : ifr.contentDocument;
+        return ifrw;
+      }
+      function frameHTML() {
+        var ifrw = frameWindow();
+        ifrw.document.body.removeAttribute("contentEditable"); // = false;
+        var text =
+          "<!DOCTYPE html>\n<html>\n" +
+          ifrw.document.documentElement.innerHTML
+            .replace(/^\n+|\n+$/g, "")
+            .trim() +
+          "\n</html>";
+        text = text.replace(/\n\n\n/g, "\n\n"); // normalize newlines (??!!)
+        ifrw.document.body.contentEditable = framecontentedit;
+        return text;
+      }
+      function loadFile() {
+        var dir = ""; //location.href.slice(0,location.href.lastIndexOf("/") + 1);
+        var name = $Id("filename").value;
+        //console.log(dir + name);
+        frameWindow().location.href = dir + name;
+        setTimeout(reEdited, 500);
+        setTimeout(submitTryit, 1000);
+      }
+      function getName() {
+        var name = $Id("filename").value;
+        return (name = name.slice(name.lastIndexOf("/") + 1));
+      }
+      function downloadFile() {
+        var text = frameHTML();
+        //text = window.editor.getDoc().getValue("\n");
+        var blob = new Blob([text], { type: "text/html;charset=utf-8" });
+        saveAs(blob, getName());
+      }
+      function loadFromLocalStorage() {
+        //Load saved Content
+        var text = localStorage.getItem(getName());
+        if (text != null) {
+          $Id("textareaCode").value = text;
+          window.editor.getDoc().setValue(text);
+          submitTryit();
+        }
+      }
+      function saveToLocalStorage() {
+        if (typeof Storage !== "undefined") {
+          var sHTML = frameHTML(); //Get content
+          localStorage.setItem(getName(), sHTML);
+          alert("Saved Successfully");
+        } else {
+          alert("No localStorage available");
+        }
+      }
+      function viewSource() {
+        var source = frameHTML();
+        //now we need to escape the html special chars, javascript has escape
+        //but this does not do what we want
+        source = source.replace(/</g, "&lt;");
+        //now we add <pre> tags to preserve whitespace
+        source = "<pre>" + source + "</pre>";
+        var sourceWindow = window.open("Nice Title", "Source of page", "");
+        sourceWindow.document.write(source);
+        sourceWindow.document.close(); //close the document for writing, not the window
+      }
+      function frameEditable() {
+        $Id("checkedit").value = ~$Id("checkedit").value;
+        if ($Id("checkedit").value == 0) {
+          framecontentedit = true;
+          $Id("switchflag").innerHTML = "ON";
+        } else {
+          framecontentedit = false;
+          $Id("switchflag").innerHTML = "OFF";
+        }
+        submitTryit();
+        reEdited();
+      }
+    </script>
+    <script src="js/FileSaver.js"></script>
+    <script>
+      /* alert before leaving page
+		window.addEventListener("beforeunload", function (e) {
+			var confirmationMessage = 'It looks like you have been editing something. '
+									+ 'If you leave before saving, your changes will be lost.';
+	
+			(e || window.event).returnValue = confirmationMessage; //Gecko + IE
+			return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+		});
+		*/
+    </script>
+  </body>
+</html>

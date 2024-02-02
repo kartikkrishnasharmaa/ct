@@ -1,0 +1,77 @@
+{
+  "main": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "MCQ",
+      "url": "/mcq"
+    },
+    {
+      "name": "Quiz",
+      "url": "/quiz"
+    },
+    {
+      "name": "Interview Preparation",
+      "url": "/interview-question"
+    },
+    {
+      "name": "Articles",
+      "url": "",
+      "hasChildren": true,
+      "children": [
+        {
+          "name": "Latest Tech News",
+          "url": "/categories/tech-news"
+        },
+        {
+          "name": "Artifical Intelligence",
+          "url": "/categories/artificial-intelligence"
+        },
+        {
+          "name": "Cyber Security",
+          "url": "/categories/cybersecurity"
+        },
+        {
+          "name": "Career",
+          "url": "/categories/career"
+        },
+        {
+          "name": "JavaScript",
+          "url": "/categories/javascript"
+        },
+        {
+          "name": "Internet",
+          "url": "/categories/internet"
+        },
+        {
+          "name": "ReactJs",
+          "url": "/categories/reactjs"
+        },
+        {
+          "name": "How To",
+          "url": "/categories/how-to"
+        }
+      ]
+    }
+  ],
+  "footer": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "About",
+      "url": "/about"
+    },
+    {
+      "name": "Advertise",
+      "url": "/advertise"
+    },
+    {
+      "name": "Contact Us",
+      "url": "/contact"
+    }
+  ]
+}

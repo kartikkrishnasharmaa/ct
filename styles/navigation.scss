@@ -1,0 +1,70 @@
+body.menu-open {
+  @apply overflow-hidden pr-0;
+}
+
+.header {
+  @apply top-0 z-10 bg-body  dark:border-darkmode-border dark:bg-darkmode-body;
+}
+
+// navbar items
+.navbar {
+  @apply relative flex h-14 flex-wrap items-center justify-between;
+}
+
+.collapse-menu {
+  @apply fixed right-0 top-0 z-10 mx-0 h-[100vh] max-w-[400px] items-center border-l border-l-dark  bg-body p-6 transition-transform duration-300 ease-in-out dark:bg-darkmode-body lg:static lg:flex lg:h-auto lg:w-auto lg:max-w-full lg:space-x-4 lg:border-l-0 lg:bg-transparent lg:p-0 xl:space-x-8;
+}
+
+.navbar-brand {
+  @apply text-xl font-semibold text-dark;
+  image {
+    @apply max-h-full max-w-full;
+  }
+}
+
+.navbar-nav {
+  @apply mt-16 lg:mt-0;
+}
+
+.nav-item {
+  @apply mb-5 text-left lg:mb-0;
+
+  &.active {
+    @apply bg-primary text-white;
+  }
+}
+
+.nav-link {
+  @apply rounded-[16px] px-6 py-2.5 text-left font-secondary text-[13.5px] capitalize  text-dark transition hover:bg-primary hover:text-white dark:text-darkmode-light md:px-3 md:py-3 lg:text-center xl:px-5;
+
+  &.active {
+    @apply bg-primary text-white;
+  }
+}
+
+.nav-dropdown {
+  @apply mr-0;
+}
+
+.nav-dropdown-list {
+  @apply z-10 rounded-lg border border-transparent bg-white p-4 shadow dark:border-darkmode-border dark:bg-darkmode-body;
+}
+
+.nav-dropdown-item {
+  @apply mb-1.5;
+}
+
+.nav-dropdown-link {
+  @apply min-w-[150px] rounded bg-white text-base font-semibold text-primary transition dark:bg-darkmode-body dark:text-white;
+
+  &.active {
+    @apply bg-primary/10 font-semibold text-primary dark:text-white;
+  }
+}
+
+.light .menu-open {
+  .border-border,
+  &.border-border {
+    @apply border-darkmode-border;
+  }
+}

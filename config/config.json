@@ -1,0 +1,43 @@
+{
+  "site": {
+    "title": "Coding Tutorials",
+    "base_url": "https://codingtutorials.in",
+    "favicon": "/images/favicon.png",
+    "logo": "/images/logo.png",
+    "logo_white": "/images/logo-white.png",
+    "logo_width": "190",
+    "logo_height": "",
+    "logo_text": "Coding Tutorials"
+  },
+  "settings": {
+    "theme_switcher": true,
+    "default_theme": "system"
+  },
+  "params": {
+    "tag_manager_id": ""
+  },
+  "metadata": {
+    "meta_author": "Kartik Sharma",
+    "meta_image": "/images/logo.png",
+    "meta_description": "Learn the essentials of computer programming technologies from the Basic to Advanced topics, along with real life practice examples and useful references at free of cost.",
+    "meta_keywords": "coding tutorials, programming tutorials, computer programming tutorials, programming tutorials for beginners, programming tutorials for kids, programming tutorials for adults, programming tutorials for free, programming tutorials for beginners pdf, programming tutorials for beginners java, programming tutorials for beginners python, programming tutorials for beginners c++, programming tutorials for beginners c#, programming tutorials for beginners html, programming tutorials for beginners javascript, programming tutorials for beginners visual basic, programming tutorials for beginners visual studio, programming tutorials for beginners android, programming tutorials for beginners pdf free download, programming tutorials for beginners free download, programming tutorials for beginners video, programming tutorials for beginners youtube, programming tutorials for beginners online, programming tutorials for beginners pdf download, programming tutorials for beginners pdf free download, programming tutorials for beginners free download, programming tutorials for beginners video, programming tutorials for beginners youtube, programming tutorials for beginners online, programming tutorials for beginners pdf download",
+    "meta_robots": "index, follow",
+    "meta_googlebot": "index, follow",
+    "og_type": "website",
+    "og_title": "Coding Tutorials",
+    "og_description": "Learn the essentials of computer programming technologies from the Basic to Advanced topics, along with real life practice examples and useful references at free of cost.",
+    "og_image": "/images/logo.png",
+    "og_url": "https://codingtutorials.in",
+    "og_site_name": "Coding Tutorials",
+    "og_locale": "en_US",
+    "twitter_card": "summary",
+    "twitter_description": "Learn the essentials of computer programming technologies from the Basic to Advanced topics, along with real life practice examples and useful references at free of cost.",
+    "twitter_image": "/images/logo.png",
+    "twitter_url": "https://codingtutorials.in"
+  },
+  "widgets": {
+    "about": {
+      "enable": true
+    }
+  }
+}
